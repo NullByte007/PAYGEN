@@ -13,4 +13,8 @@ Basic Introduction :
 Usage Information :
 
 	[*] prerequisites : msfvenom
+	--> chmod +x install.sh
+	--> ./install.sh
+	
+	
 	[*] Run using : python3 PAYGEN.py
