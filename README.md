@@ -18,3 +18,6 @@ Usage Information :
 	
 	
 	[*] Run using : python3 PAYGEN.py
+
+# Youtube Tutorial
+	https://youtu.be/pba59IeBmek
